@@ -8,10 +8,10 @@ public interface PlayerService {
 
     Player getById(Long id);
 
-    List<Player> getAllPlayers();
+    List<Player> getAll();
 
-    void savePlayer(Player player);
+    void save(Player player);
 
-    void deletePlayer(Long id);
+    void delete(Long id);
 
 }
