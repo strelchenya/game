@@ -1,23 +1,20 @@
 package com.game.entity;
 
-
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "players")
-public class Player{
+@Table(name = "player")
+public class Player extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "title")
     private String title;
+    @Enumerated(EnumType.STRING)
     @Column(name = "race")
     private Race race;
+    @Enumerated(EnumType.STRING)
     @Column(name = "profession")
     private Profession profession;
     @Column(name = "experience")
@@ -52,14 +49,6 @@ public class Player{
         this.untilNextLevel = untilNextLevel;
         this.birthday = birthday;
         this.banned = banned;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -137,8 +126,7 @@ public class Player{
     @Override
     public String toString() {
         return "Player{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", title='" + title + '\'' +
                 ", race=" + race +
                 ", profession=" + profession +

@@ -1,6 +1,12 @@
 com\game\config\WebConfig.class
 com\game\config\MyWebAppInit.class
-com\game\entity\Race.class
+com\game\entity\Player.class
 com\game\entity\Profession.class
-com\game\config\AppConfig.class
 com\game\controller\PlayerOrder.class
+com\game\controller\PlayerRestController.class
+com\game\repository\PlayerRepository.class
+com\game\entity\Race.class
+com\game\service\PlayerServiceImpl.class
+com\game\entity\BaseEntity.class
+com\game\config\AppConfig.class
+com\game\service\PlayerService.class
