@@ -1,15 +1,17 @@
 package com.game.entity;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "players")
-public class Player extends BaseEntity{
+public class Player{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "title")
@@ -32,16 +34,15 @@ public class Player extends BaseEntity{
     public Player() {
     }
 
-    public Player(
-            String name,
-            String title,
-            Race race,
-            Profession profession,
-            Integer experience,
-            Integer level,
-            Integer untilNextLevel,
-            Date birthday,
-            Boolean banned) {
+    public Player(String name,
+                  String title,
+                  Race race,
+                  Profession profession,
+                  Integer experience,
+                  Integer level,
+                  Integer untilNextLevel,
+                  Date birthday,
+                  Boolean banned) {
         this.name = name;
         this.title = title;
         this.race = race;
@@ -51,6 +52,14 @@ public class Player extends BaseEntity{
         this.untilNextLevel = untilNextLevel;
         this.birthday = birthday;
         this.banned = banned;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -128,7 +137,8 @@ public class Player extends BaseEntity{
     @Override
     public String toString() {
         return "Player{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", title='" + title + '\'' +
                 ", race=" + race +
                 ", profession=" + profession +
