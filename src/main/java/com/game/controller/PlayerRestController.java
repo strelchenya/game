@@ -44,15 +44,22 @@ public class PlayerRestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        int level = (int) ((Math.sqrt((2500 + 200 * player.getExperience())) - 50) / 100);
+        player.setLevel(level);
+
+        int untilNextLevel = 50 * (player.getLevel() + 1) * (player.getLevel() + 2) - player.getExperience();
+        player.setUntilNextLevel(untilNextLevel);
+
         this.playerService.save(player);
         return new ResponseEntity<>(player, headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/players/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE) //method POST
-    public ResponseEntity<Player> updatePlayer(@RequestBody Player player, UriComponentsBuilder builder){
+    @RequestMapping(value = "/players/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    //method POST
+    public ResponseEntity<Player> updatePlayer(@RequestBody Player player, UriComponentsBuilder builder) {
         HttpHeaders headers = new HttpHeaders();
 
-        if (player == null){
+        if (player == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -61,10 +68,10 @@ public class PlayerRestController {
     }
 
     @RequestMapping(value = "/players/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Player> deletePlayer(@PathVariable("id") Long id){
+    public ResponseEntity<Player> deletePlayer(@PathVariable("id") Long id) {
         Player player = this.playerService.getById(id);
 
-        if (player == null){
+        if (player == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -73,22 +80,22 @@ public class PlayerRestController {
     }
 
     @RequestMapping(value = "/players", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<List<Player>> getAllPlayers(){
+    public ResponseEntity<List<Player>> getAllPlayers() {
 
         List<Player> players = this.playerService.getAll();
 
-        if (players.isEmpty()){
-           return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (players.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(players, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/players/count", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Integer> getCountPlayers(){
+    public ResponseEntity<Integer> getCountPlayers() {
 
         List<Player> players = this.playerService.getAll();
 
-        if (players.isEmpty()){
+        if (players.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(players.size(), HttpStatus.OK);
