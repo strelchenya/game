@@ -44,11 +44,9 @@ public class PlayerRestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        int level = (int) ((Math.sqrt((2500 + 200 * player.getExperience())) - 50) / 100);
-        player.setLevel(level);
+        player.setLevel(levelPlayer(player.getExperience()));
 
-        int untilNextLevel = 50 * (player.getLevel() + 1) * (player.getLevel() + 2) - player.getExperience();
-        player.setUntilNextLevel(untilNextLevel);
+        player.setUntilNextLevel(untilNextLevel(player.getLevel(), player.getExperience()));
 
         this.playerService.save(player);
         return new ResponseEntity<>(player, headers, HttpStatus.CREATED);
@@ -99,5 +97,15 @@ public class PlayerRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(players.size(), HttpStatus.OK);
+    }
+
+    private static Integer levelPlayer(int experience){
+        int level = (int) ((Math.sqrt((2500 + 200 * experience)) - 50) / 100);
+        return level;
+    }
+
+    private static Integer untilNextLevel(int level, int experience){
+        int untilNextLevel = 50 * (level + 1) * (level + 2) - experience;
+        return untilNextLevel;
     }
 }
