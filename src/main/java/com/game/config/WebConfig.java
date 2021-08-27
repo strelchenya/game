@@ -49,4 +49,5 @@ public class WebConfig implements WebMvcConfigurer {
         converter.getObjectMapper().setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         converters.add(converter);
     }
+
 }

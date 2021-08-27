@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "player")
-public class Player extends BaseEntity{
+public class Player extends BaseEntity {
 
     @Column(name = "name")
     private String name;

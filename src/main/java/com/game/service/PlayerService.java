@@ -1,6 +1,7 @@
 package com.game.service;
 
 import com.game.entity.Player;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -12,7 +13,10 @@ public interface PlayerService {
 
     void delete(Long id);
 
-    List<Player> getAll();
+    Page<Player> getAll(int pageNumber, int pageSize, String sort);
 
-    Integer countPlayers();
+    long countPlayers();
+
+    List<Player> findByNameAndTitleAndRaceAndProfession(String name, String title, String race, String profession);
+    List<Player> findByNameContains(String name);
 }
