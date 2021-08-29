@@ -104,4 +104,19 @@ public class PlayerServiceImpl implements PlayerService {
 
         return id != null && id <= 0;
     }
+
+    @Override
+    public boolean upgradeIsNotValid(Player player, Long id) {
+
+        Player repositoryPlayer = playerRepository.findById(id).get();
+
+        return /*player != null &&*/
+                repositoryPlayer.getName().equals(player.getName()) &&
+                repositoryPlayer.getTitle().equals(player.getTitle()) &&
+                repositoryPlayer.getRace() == player.getRace() &&
+                repositoryPlayer.getProfession() == player.getProfession() &&
+                repositoryPlayer.getExperience().equals(player.getExperience()) &&
+                (repositoryPlayer.getBirthday().compareTo(player.getBirthday()) == 0) &&
+                repositoryPlayer.getBanned().equals(player.getBanned());
+    }
 }

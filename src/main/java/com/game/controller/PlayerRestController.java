@@ -5,7 +5,6 @@ import com.game.entity.PlayersFilter;
 import com.game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +48,8 @@ public class PlayerRestController {
 
     @PostMapping(path = "/players/{id}", produces = "application/json", consumes = "application/json")
     public ResponseEntity<Player> updatePlayer(@RequestBody Player player, @PathVariable("id") String stringId) {
-        Long id = null;
+
+        Long id;
 
         if (playerService.idIsNotValid(stringId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -62,27 +62,29 @@ public class PlayerRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-//        if (player == null && player.getId() == null && !player.getId().toString().matches("^\\d+$")) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
+        if (player != null && playerService.upgradeIsNotValid(player, id)) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
 
-        if (playerService.playerIsValid(player)){
+        if (playerService.playerIsValid(player)) {
             return new ResponseEntity<>(this.playerService.edit(player, id), HttpStatus.OK);
-        }else {
+        } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/players/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @DeleteMapping(path = "/players/{id}")
     public ResponseEntity<Player> deletePlayer(@PathVariable("id") Long id) {
         Optional<Player> player = playerService.getById(id);
-
-        if (!player.isPresent()) {                                          //player == null
+        if (id <= 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (!player.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         this.playerService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(path = "/players", produces = "application/json")
