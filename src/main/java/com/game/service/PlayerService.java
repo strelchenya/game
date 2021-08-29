@@ -1,22 +1,23 @@
 package com.game.service;
 
 import com.game.entity.Player;
+import com.game.entity.PlayersFilter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PlayerService {
 
-    Player getById(Long id);
+    Optional<Player> getById(Long id);
 
-    void save(Player player);
+    Player create(Player player);
 
     void delete(Long id);
 
-    Page<Player> getAll(int pageNumber, int pageSize, String sort);
+    List<Player> getAll(PlayersFilter playersFilter, Integer pageNumber, Integer pageSize, String order);
 
-    long countPlayers();
+    Integer getCount(PlayersFilter playersFilter, Integer pageNumber, Integer pageSize, String order);
 
-    List<Player> findByNameAndTitleAndRaceAndProfession(String name, String title, String race, String profession);
-    List<Player> findByNameContains(String name);
+    boolean playerIsValid(Player player);
 }
