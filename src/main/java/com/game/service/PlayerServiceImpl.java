@@ -23,7 +23,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     @Transactional
-    public Optional<Player> getById(Long id){
+    public Optional<Player> getById(Long id) {
         return playerRepository.findById(id);
     }
 
@@ -52,21 +52,21 @@ public class PlayerServiceImpl implements PlayerService {
     @Transactional
     public Integer getCount(PlayersFilter playersFilter, Integer pageNumber, Integer pageSize, String order) {
         Pageable paging = PageRequest.of(pageNumber, pageSize, Sort.by(order.toLowerCase(Locale.ROOT)));
-        return (int)playerRepository.findAll(playersFilter, paging).getTotalElements();
+        return (int) playerRepository.findAll(playersFilter, paging).getTotalElements();
     }
 
-    private Integer getCurrentLevel(Integer currentExp){
+    private Integer getCurrentLevel(Integer currentExp) {
         return (int) (Math.sqrt(2500 + 200 * currentExp) - 50) / 100;
     }
 
-    private Integer getExpForNextLevel(Integer currentLvl, Integer currentExp){
+    private Integer getExpForNextLevel(Integer currentLvl, Integer currentExp) {
         return 50 * (currentLvl + 1) * (currentLvl + 2) - currentExp;
     }
 
     @Override
-    public boolean playerIsValid(Player player){
+    public boolean playerIsValid(Player player) {
 
-        boolean result = player.getName() != null &&
+        return player.getName() != null &&
                 player.getTitle() != null &&
                 player.getRace() != null &&
                 player.getProfession() != null &&
@@ -80,8 +80,28 @@ public class PlayerServiceImpl implements PlayerService {
                 player.getBirthday().after(new Date(946684800000L)) &&          //2000.01.01...3000
                 player.getBirthday().before(new Date(32535215999999L));
 
-        return result;
     }
 
+    @Override
+    @Transactional
+    public Player edit(Player player, Long id) {
+        player.setId(id);
+        player.setLevel(getCurrentLevel(player.getExperience()));
+        player.setUntilNextLevel(getExpForNextLevel(player.getLevel(), player.getExperience()));
 
+        return playerRepository.save(player);
+    }
+
+    @Override
+    public boolean idIsNotValid(String stringId) {
+        Long id;
+
+        try {
+            id = Long.parseLong(stringId);
+        } catch (Exception e) {
+            return true;
+        }
+
+        return id != null && id <= 0;
+    }
 }

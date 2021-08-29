@@ -20,4 +20,9 @@ public interface PlayerService {
     Integer getCount(PlayersFilter playersFilter, Integer pageNumber, Integer pageSize, String order);
 
     boolean playerIsValid(Player player);
+
+    Player edit(Player player, Long id);
+
+    boolean idIsNotValid(String stringId);
+//    boolean upgradeIsNotValid(Player player);
 }

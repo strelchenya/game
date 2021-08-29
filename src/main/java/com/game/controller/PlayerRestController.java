@@ -4,12 +4,10 @@ import com.game.entity.Player;
 import com.game.entity.PlayersFilter;
 import com.game.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,21 +20,17 @@ public class PlayerRestController {
     private PlayerService playerService;
 
     @GetMapping(path = "/players/{id}", produces = "application/json")
-    public ResponseEntity<Player> getPlayer(@PathVariable("id") String sid){
+    public ResponseEntity<Player> getPlayer(@PathVariable("id") String stringId) {
         Long id = null;
 
-        try{
-            id = Long.parseLong(sid);
-        } catch (Exception e){
+        if (playerService.idIsNotValid(stringId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if (id <= 0) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        id = Long.parseLong(stringId);
 
         Optional<Player> player = playerService.getById(id);
-        if (player.isPresent()){
+        if (player.isPresent()) {
             return new ResponseEntity<>(player.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -44,27 +38,39 @@ public class PlayerRestController {
     }
 
     @PostMapping(path = "/players", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<Player> createPlayer(@RequestBody Player player){
+    public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
 
-        if (playerService.playerIsValid(player)){
+        if (playerService.playerIsValid(player)) {
             return new ResponseEntity<>(playerService.create(player), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    //todo
-    @RequestMapping(value = "/players/{id}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    //method POST
-    public ResponseEntity<Player> updatePlayer(@RequestBody Player player, UriComponentsBuilder builder) {
-        HttpHeaders headers = new HttpHeaders();
+    @PostMapping(path = "/players/{id}", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<Player> updatePlayer(@RequestBody Player player, @PathVariable("id") String stringId) {
+        Long id = null;
 
-        if (player == null) {
+        if (playerService.idIsNotValid(stringId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-//        this.playerService.save(player);
-        return new ResponseEntity<>(player, headers, HttpStatus.OK);
+        id = Long.parseLong(stringId);
+
+        Optional<Player> optionalPlayer = playerService.getById(id);
+        if (!optionalPlayer.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+//        if (player == null && player.getId() == null && !player.getId().toString().matches("^\\d+$")) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+
+        if (playerService.playerIsValid(player)){
+            return new ResponseEntity<>(this.playerService.edit(player, id), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @RequestMapping(value = "/players/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -93,8 +99,7 @@ public class PlayerRestController {
                                                    @RequestParam(name = "maxLevel", required = false) Integer maxLevel,
                                                    @RequestParam(name = "order", defaultValue = "id", required = false) String order,
                                                    @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                   @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize)
-    {
+                                                   @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
 
         PlayersFilter playersFilter = new PlayersFilter()
                 .setName(name)
@@ -126,8 +131,7 @@ public class PlayerRestController {
                                                    @RequestParam(name = "maxLevel", required = false) Integer maxLevel,
                                                    @RequestParam(name = "order", defaultValue = "id", required = false) String order,
                                                    @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                   @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize)
-    {
+                                                   @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
         PlayersFilter playersFilter = new PlayersFilter()
                 .setName(name)
                 .setTitle(title)
@@ -141,6 +145,6 @@ public class PlayerRestController {
                 .setMinLevel(minLevel)
                 .setMaxLevel(maxLevel);
 
-        return new ResponseEntity<Integer>(playerService.getCount(playersFilter, pageNumber, pageSize, order), HttpStatus.OK);
+        return new ResponseEntity<>(playerService.getCount(playersFilter, pageNumber, pageSize, order), HttpStatus.OK);
     }
 }
