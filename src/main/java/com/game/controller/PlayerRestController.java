@@ -20,7 +20,7 @@ public class PlayerRestController {
 
     @GetMapping(path = "/players/{id}", produces = "application/json")
     public ResponseEntity<Player> getPlayer(@PathVariable("id") String stringId) {
-        Long id = null;
+        Long id;
 
         if (playerService.idIsNotValid(stringId)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -62,8 +62,8 @@ public class PlayerRestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if (player != null && playerService.upgradeIsNotValid(player, id)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (playerService.upgradeIsNotValid(player)) {
+            return new ResponseEntity<>(playerService.getById(id).get(),HttpStatus.OK);
         }
 
         if (playerService.playerIsValid(player)) {

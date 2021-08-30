@@ -77,8 +77,8 @@ public class PlayerServiceImpl implements PlayerService {
                 !player.getName().isEmpty() &&
                 player.getExperience() >= 0 &&
                 player.getExperience() <= 10_000_000 &&
-                player.getBirthday().after(new Date(946684800000L)) &&          //2000.01.01...3000
-                player.getBirthday().before(new Date(32535215999999L));
+                player.getBirthday().after(new Date(946684799000L)) &&          //2000.01.01...3000 946684800000L  946684799000
+                player.getBirthday().before(new Date(32503680000000L));            //32535215999999L 32503680000000
 
     }
 
@@ -105,18 +105,31 @@ public class PlayerServiceImpl implements PlayerService {
         return id != null && id <= 0;
     }
 
+//    @Override
+//    public boolean upgradeIsNotValid(Player player, Long id) {
+//
+//        Player repositoryPlayer = playerRepository.findById(id).get();
+//
+//        return  repositoryPlayer.getName().equals(player.getName()) &&
+//                repositoryPlayer.getTitle().equals(player.getTitle()) &&
+//                repositoryPlayer.getRace() == player.getRace() &&
+//                repositoryPlayer.getProfession() == player.getProfession() &&
+//                repositoryPlayer.getExperience().equals(player.getExperience()) &&
+//                (repositoryPlayer.getBirthday().compareTo(player.getBirthday()) == 0) &&
+//                repositoryPlayer.getBanned().equals(player.getBanned());
+//    }
+
+
     @Override
-    public boolean upgradeIsNotValid(Player player, Long id) {
+    public boolean upgradeIsNotValid(Player player) {
 
-        Player repositoryPlayer = playerRepository.findById(id).get();
+        return  player.getName() == null &&
+                player.getTitle() == null &&
+                player.getRace() == null &&
+                player.getProfession() == null &&
+                player.getBirthday() == null &&
+                player.getExperience() == null &&
+                player.getBanned() == null;
 
-        return /*player != null &&*/
-                repositoryPlayer.getName().equals(player.getName()) &&
-                repositoryPlayer.getTitle().equals(player.getTitle()) &&
-                repositoryPlayer.getRace() == player.getRace() &&
-                repositoryPlayer.getProfession() == player.getProfession() &&
-                repositoryPlayer.getExperience().equals(player.getExperience()) &&
-                (repositoryPlayer.getBirthday().compareTo(player.getBirthday()) == 0) &&
-                repositoryPlayer.getBanned().equals(player.getBanned());
     }
 }
