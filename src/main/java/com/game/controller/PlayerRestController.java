@@ -58,19 +58,24 @@ public class PlayerRestController {
         id = Long.parseLong(stringId);
 
         Optional<Player> optionalPlayer = playerService.getById(id);
+
         if (!optionalPlayer.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         if (playerService.upgradeIsNotValid(player)) {
-            return new ResponseEntity<>(playerService.getById(id).get(),HttpStatus.OK);
+            return new ResponseEntity<>(playerService.getById(id).get(), HttpStatus.OK);
         }
 
-        if (playerService.playerIsValid(player)) {
-            return new ResponseEntity<>(this.playerService.edit(player, id), HttpStatus.OK);
-        } else {
+        if (playerService.IsNotCorrectlyValue(player)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
+        Player repositoryPlayer = optionalPlayer.get();
+        repositoryPlayer = playerService.update(player, repositoryPlayer);
+
+        return new ResponseEntity<>(this.playerService.edit(repositoryPlayer), HttpStatus.OK);
+
     }
 
     @DeleteMapping(path = "/players/{id}")

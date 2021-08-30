@@ -2,7 +2,6 @@ package com.game.service;
 
 import com.game.entity.Player;
 import com.game.entity.PlayersFilter;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +20,13 @@ public interface PlayerService {
 
     boolean playerIsValid(Player player);
 
-    Player edit(Player player, Long id);
+    Player edit(Player player);
 
     boolean idIsNotValid(String stringId);
+
     boolean upgradeIsNotValid(Player player);
+
+    Player update(Player player, Player repositoryPlayer);
+
+    boolean IsNotCorrectlyValue(Player player);
 }

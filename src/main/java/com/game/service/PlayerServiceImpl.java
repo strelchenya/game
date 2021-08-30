@@ -2,6 +2,8 @@ package com.game.service;
 
 import com.game.entity.Player;
 import com.game.entity.PlayersFilter;
+import com.game.entity.Profession;
+import com.game.entity.Race;
 import com.game.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -77,18 +79,14 @@ public class PlayerServiceImpl implements PlayerService {
                 !player.getName().isEmpty() &&
                 player.getExperience() >= 0 &&
                 player.getExperience() <= 10_000_000 &&
-                player.getBirthday().after(new Date(946684799000L)) &&          //2000.01.01...3000 946684800000L  946684799000
-                player.getBirthday().before(new Date(32503680000000L));            //32535215999999L 32503680000000
+                player.getBirthday().after(new Date(946684799000L)) &&
+                player.getBirthday().before(new Date(32503680000000L));
 
     }
 
     @Override
     @Transactional
-    public Player edit(Player player, Long id) {
-        player.setId(id);
-        player.setLevel(getCurrentLevel(player.getExperience()));
-        player.setUntilNextLevel(getExpForNextLevel(player.getLevel(), player.getExperience()));
-
+    public Player edit(Player player) {
         return playerRepository.save(player);
     }
 
@@ -105,31 +103,113 @@ public class PlayerServiceImpl implements PlayerService {
         return id != null && id <= 0;
     }
 
-//    @Override
-//    public boolean upgradeIsNotValid(Player player, Long id) {
-//
-//        Player repositoryPlayer = playerRepository.findById(id).get();
-//
-//        return  repositoryPlayer.getName().equals(player.getName()) &&
-//                repositoryPlayer.getTitle().equals(player.getTitle()) &&
-//                repositoryPlayer.getRace() == player.getRace() &&
-//                repositoryPlayer.getProfession() == player.getProfession() &&
-//                repositoryPlayer.getExperience().equals(player.getExperience()) &&
-//                (repositoryPlayer.getBirthday().compareTo(player.getBirthday()) == 0) &&
-//                repositoryPlayer.getBanned().equals(player.getBanned());
-//    }
-
-
-    @Override
     public boolean upgradeIsNotValid(Player player) {
 
-        return  player.getName() == null &&
+        return player.getName() == null &&
                 player.getTitle() == null &&
                 player.getRace() == null &&
                 player.getProfession() == null &&
                 player.getBirthday() == null &&
                 player.getExperience() == null &&
                 player.getBanned() == null;
+    }
 
+    public Player update(Player player, Player repositoryPlayer) {
+        if (player.getName() != null && player.getName().length() <= 12) {
+            repositoryPlayer.setName(player.getName());
+        }
+
+        if (player.getTitle() != null && player.getTitle().length() <= 30) {
+            repositoryPlayer.setTitle(player.getTitle());
+        }
+
+        if (player.getRace() != null) {
+            repositoryPlayer.setRace(player.getRace());
+        }
+
+        if (player.getProfession() != null) {
+            repositoryPlayer.setProfession(player.getProfession());
+        }
+
+        if (player.getBirthday() != null) {
+            repositoryPlayer.setBirthday(player.getBirthday());
+        }
+
+        if (player.getBanned() != null && player.getBirthday().after(new Date(946684799000L)) &&
+                player.getBirthday().before(new Date(32503680000000L))) {
+            repositoryPlayer.setBanned(player.getBanned());
+        }
+
+        if (player.getExperience() != null && player.getExperience() >= 0 && player.getExperience() <= 10_000_000) {
+            repositoryPlayer.setExperience(player.getExperience());
+            repositoryPlayer.setLevel(getCurrentLevel(repositoryPlayer.getExperience()));
+            repositoryPlayer.setUntilNextLevel(getExpForNextLevel(repositoryPlayer.getLevel(), repositoryPlayer.getExperience()));
+        }
+
+        return repositoryPlayer;
+    }
+
+    @Override
+    public boolean IsNotCorrectlyValue(Player player) {
+//        int count = 0;
+        if (player.getName() == null) {
+//            count++;
+        } else {
+            if (player.getName().isEmpty() || player.getName().length() > 12) {
+                return true;
+            }
+        }
+        if (player.getTitle() == null) {
+//            count++;
+        } else {
+            if (player.getTitle().isEmpty() || player.getTitle().length() > 30) {
+                return true;
+            }
+        }
+
+        if (player.getRace() == null) {
+//            count++;
+        } else {
+            if (player.getRace().ordinal() < 0 || player.getRace().ordinal() > Race.values().length) {
+                return true;
+            }
+        }
+
+        if (player.getProfession() == null) {
+//            count++;
+        } else {
+            if (player.getProfession().ordinal() < 0 || player.getProfession().ordinal() > Profession.values().length) {
+                return true;
+            }
+        }
+
+        if (player.getBirthday() == null) {
+//            count++;
+        } else {
+            if (!player.getBirthday().after(new Date(946684799000L)) ||
+                    !player.getBirthday().before(new Date(32503680000000L))) {
+                return true;
+            }
+        }
+
+//        if (player.getBanned() == null) {
+//            count++;
+//        }
+
+        if (player.getExperience() == null) {
+//            count++;
+        } else {
+            if (player.getExperience() < 0 || player.getExperience() > 10_000_000) {
+                return true;
+            }
+        }
+
+//        if (count > 0 && count != 7){
+//            return true;
+//        }else {
+//            return false;
+//        }
+
+        return false;
     }
 }
