@@ -29,11 +29,8 @@ public class PlayerRestController {
         id = Long.parseLong(stringId);
 
         Optional<Player> player = playerService.getById(id);
-        if (player.isPresent()) {
-            return new ResponseEntity<>(player.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return player.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping(path = "/players", produces = "application/json", consumes = "application/json")
@@ -93,20 +90,21 @@ public class PlayerRestController {
     }
 
     @GetMapping(path = "/players", produces = "application/json")
-    public ResponseEntity<List<Player>> getPlayers(@RequestParam(name = "name", required = false) String name,
-                                                   @RequestParam(name = "title", required = false) String title,
-                                                   @RequestParam(name = "race", required = false) String race,
-                                                   @RequestParam(name = "profession", required = false) String profession,
-                                                   @RequestParam(name = "after", required = false) Long after,
-                                                   @RequestParam(name = "before", required = false) Long before,
-                                                   @RequestParam(name = "banned", required = false) Boolean banned,
-                                                   @RequestParam(name = "minExperience", required = false) Integer minExperience,
-                                                   @RequestParam(name = "maxExperience", required = false) Integer maxExperience,
-                                                   @RequestParam(name = "minLevel", required = false) Integer minLevel,
-                                                   @RequestParam(name = "maxLevel", required = false) Integer maxLevel,
-                                                   @RequestParam(name = "order", defaultValue = "id", required = false) String order,
-                                                   @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                   @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
+    public ResponseEntity<List<Player>> getPlayers(
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "race", required = false) String race,
+            @RequestParam(name = "profession", required = false) String profession,
+            @RequestParam(name = "after", required = false) Long after,
+            @RequestParam(name = "before", required = false) Long before,
+            @RequestParam(name = "banned", required = false) Boolean banned,
+            @RequestParam(name = "minExperience", required = false) Integer minExperience,
+            @RequestParam(name = "maxExperience", required = false) Integer maxExperience,
+            @RequestParam(name = "minLevel", required = false) Integer minLevel,
+            @RequestParam(name = "maxLevel", required = false) Integer maxLevel,
+            @RequestParam(name = "order", defaultValue = "id", required = false) String order,
+            @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
 
         PlayersFilter playersFilter = new PlayersFilter()
                 .setName(name)
@@ -121,24 +119,28 @@ public class PlayerRestController {
                 .setMinLevel(minLevel)
                 .setMaxLevel(maxLevel);
 
-        return new ResponseEntity<>(playerService.getAll(playersFilter, pageNumber, pageSize, order), HttpStatus.OK);
+        return new ResponseEntity<>(
+                playerService.getAll(playersFilter, pageNumber, pageSize, order),
+                HttpStatus.OK);
     }
 
     @GetMapping(path = "/players/count", produces = "application/json")
-    public ResponseEntity<Integer> getPlayersCount(@RequestParam(name = "name", required = false) String name,
-                                                   @RequestParam(name = "title", required = false) String title,
-                                                   @RequestParam(name = "race", required = false) String race,
-                                                   @RequestParam(name = "profession", required = false) String profession,
-                                                   @RequestParam(name = "after", required = false) Long after,
-                                                   @RequestParam(name = "before", required = false) Long before,
-                                                   @RequestParam(name = "banned", required = false) Boolean banned,
-                                                   @RequestParam(name = "minExperience", required = false) Integer minExperience,
-                                                   @RequestParam(name = "maxExperience", required = false) Integer maxExperience,
-                                                   @RequestParam(name = "minLevel", required = false) Integer minLevel,
-                                                   @RequestParam(name = "maxLevel", required = false) Integer maxLevel,
-                                                   @RequestParam(name = "order", defaultValue = "id", required = false) String order,
-                                                   @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-                                                   @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
+    public ResponseEntity<Integer> getPlayersCount(
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "race", required = false) String race,
+            @RequestParam(name = "profession", required = false) String profession,
+            @RequestParam(name = "after", required = false) Long after,
+            @RequestParam(name = "before", required = false) Long before,
+            @RequestParam(name = "banned", required = false) Boolean banned,
+            @RequestParam(name = "minExperience", required = false) Integer minExperience,
+            @RequestParam(name = "maxExperience", required = false) Integer maxExperience,
+            @RequestParam(name = "minLevel", required = false) Integer minLevel,
+            @RequestParam(name = "maxLevel", required = false) Integer maxLevel,
+            @RequestParam(name = "order", defaultValue = "id", required = false) String order,
+            @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = "3", required = false) Integer pageSize) {
+
         PlayersFilter playersFilter = new PlayersFilter()
                 .setName(name)
                 .setTitle(title)
@@ -152,6 +154,8 @@ public class PlayerRestController {
                 .setMinLevel(minLevel)
                 .setMaxLevel(maxLevel);
 
-        return new ResponseEntity<>(playerService.getCount(playersFilter, pageNumber, pageSize, order), HttpStatus.OK);
+        return new ResponseEntity<>(
+                playerService.getCount(playersFilter,pageNumber, pageSize,order),
+                                                                                                    HttpStatus.OK);
     }
 }
