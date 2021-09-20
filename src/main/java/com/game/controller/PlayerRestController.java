@@ -15,8 +15,12 @@ import java.util.Optional;
 @RequestMapping("/rest")
 public class PlayerRestController {
 
+    private final PlayerService playerService;
+
     @Autowired
-    private PlayerService playerService;
+    public PlayerRestController(PlayerService playerService) {
+        this.playerService = playerService;
+    }
 
     @GetMapping(path = "/players/{id}", produces = "application/json")
     public ResponseEntity<Player> getPlayer(@PathVariable("id") String stringId) {
